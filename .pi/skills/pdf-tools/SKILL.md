@@ -1,3 +1,7 @@
+---
+description: Read, extract text and tables from PDFs, list workspace files, read/write text files via the pdf-tools CLI.
+---
+
 # PDF Tools
 
 Use the `pdf-tools` CLI to work with PDF files in the workspace.

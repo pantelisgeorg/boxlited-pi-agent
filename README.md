@@ -25,6 +25,11 @@ Host                          BoxLite VM (node:22-slim)
 ## Quick start
 
 ```bash
+# 1. Install BoxLite CLI (one-time)
+curl -fsSL https://sh.boxlite.ai | sh
+cp ~/.local/bin/boxlite .bin/boxlite
+
+# 2. Clone and run
 git clone https://github.com/pantelisgeorg/boxlited-pi-agent-.git
 cd boxlited-pi-agent-
 ./pi                    # first run: creates VM, installs pi + Python tools

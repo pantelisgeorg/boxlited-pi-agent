@@ -25,7 +25,8 @@ Host                          BoxLite VM (node:22-slim)
 ## Quick start
 
 ```bash
-cd boxlite
+git clone https://github.com/pantelisgeorg/boxlited-pi-agent-.git
+cd boxlited-pi-agent-
 ./pi                    # first run: creates VM, installs pi + Python tools
 ./pi --version          # pass any pi CLI args through
 ./pi "fix the bug in src/foo.ts"

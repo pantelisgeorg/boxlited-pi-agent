@@ -59,7 +59,7 @@ boxlite/
 │       └── start-pdf-mcp.sh    HTTP bridge for external clients
 ├── node_modules/         Pi npm package (v0.82.1)
 ├── sessions/             Pi session logs
-├── workspace/            Your task files — the only dir mounted into the VM
+├── files/                 Your task files — the only dir mounted into the VM
 ├── pi                    Entry-point script
 ├── package.json
 └── .gitignore
@@ -90,7 +90,7 @@ The model must support tool calling (instruct/chat variants work; base models do
 
 ## PDF tools
 
-Pi can read and extract data from PDFs in `workspace/` via the `pdf-tools` CLI.
+Pi can read and extract data from PDFs in `files/` via the `pdf-tools` CLI.
 Commands are available through pi's built-in bash tool:
 
 ```bash
@@ -124,7 +124,7 @@ Everything runs inside the VM kernel:
 - Any npm / node processes Pi spawns
 - The PDF MCP server
 
-The host filesystem is **not accessible** except through the `workspace/` bind mount.
+The host filesystem is **not accessible** except through the `files/` bind mount.
 
 ## VM lifecycle
 

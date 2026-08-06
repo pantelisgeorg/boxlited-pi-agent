@@ -12,13 +12,13 @@ All file output commands support `--out <path>` to save directly to a file inste
 
 ```bash
 pdf-tools read <path>                           # full text, all pages
-pdf-tools read <path> --out /workspace/out.txt  # save to file
-pdf-tools info <path>                           # page count
-pdf-tools text <path> <page>                    # extract text from a page (1-indexed)
-pdf-tools text <path> <page> --out /workspace/p3.txt
-pdf-tools tables <path> <page>                  # extract tables as markdown
-pdf-tools tables <path> <page> html             # extract tables as HTML
-pdf-tools tables <path> <page> html --out /workspace/table.html
+pdf-tools read <path> --out out.txt         # save to file
+pdf-tools info <path>                       # page count
+pdf-tools text <path> <page>                # extract text from a page (1-indexed)
+pdf-tools text <path> <page> --out p3.txt
+pdf-tools tables <path> <page>              # extract tables as markdown
+pdf-tools tables <path> <page> html         # extract tables as HTML
+pdf-tools tables <path> <page> html --out table.html
 pdf-tools ls [subpath]                          # list workspace directory
 pdf-tools cat <path>                            # read a UTF-8 text file
 pdf-tools write <path> <content>                # create/overwrite a text file
@@ -26,8 +26,8 @@ pdf-tools write <path> <content>                # create/overwrite a text file
 
 ## Paths
 
-All file paths are relative to the workspace (`/workspace/workspace`), where your files live.
-You can use simple filenames like `report.pdf` or absolute paths like `/workspace/workspace/report.pdf`.
+All file paths are relative to the `files/` directory (`/workspace/files`), where your files live.
+Use simple filenames like `report.pdf`.
 
 ## Example workflow
 

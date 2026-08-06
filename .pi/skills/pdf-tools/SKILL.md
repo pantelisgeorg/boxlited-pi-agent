@@ -26,12 +26,13 @@ pdf-tools write <path> <content>                # create/overwrite a text file
 
 ## Paths
 
-All paths are relative to `/workspace`. Always use `/workspace/` prefix for file arguments. Example: `pdf-tools read /workspace/report.pdf`
+All file paths are relative to the workspace (`/workspace/workspace`), where your files live.
+You can use simple filenames like `report.pdf` or absolute paths like `/workspace/workspace/report.pdf`.
 
 ## Example workflow
 
-1. `pdf-tools ls` — see what's in the workspace
-2. `pdf-tools info /workspace/report.pdf` — check how many pages
-3. `pdf-tools read /workspace/report.pdf` — read the full document
-4. `pdf-tools tables /workspace/report.pdf 2 html --out /workspace/table.html` — extract and save table from page 2
-5. `pdf-tools write /workspace/summary.md "## Summary\n\n..."` — create a new file
+1. `pdf-tools ls` — see files in the workspace
+2. `pdf-tools info report.pdf` — check how many pages
+3. `pdf-tools read report.pdf` — read the full document
+4. `pdf-tools tables report.pdf 2 html --out table.html` — extract and save table from page 2
+5. `pdf-tools write summary.md "## Summary\n\n..."` — create a new file

@@ -30,7 +30,7 @@ mcp = MCPServer("pdf-tools")
 # "no such file or directory" because pdfplumber resolved it against the
 # server's CWD, not WORKSPACE.
 WORKSPACE = Path(
-    os.environ.get("MCP_WORKSPACE", "/home/george/Desktop/boxlite_project/boxlite/workspace")
+    os.environ.get("MCP_WORKSPACE", "/workspace/workspace")
 ).resolve()
 WORKSPACE.mkdir(parents=True, exist_ok=True)
 

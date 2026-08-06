@@ -18,7 +18,7 @@ from pathlib import Path
 import pdfplumber
 
 WORKSPACE = Path(
-    os.environ.get("MCP_WORKSPACE", "/workspace")
+    os.environ.get("MCP_WORKSPACE", "/workspace/workspace")
 ).resolve()
 
 

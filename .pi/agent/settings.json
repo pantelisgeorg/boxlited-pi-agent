@@ -1,7 +1,4 @@
 {
   "defaultProvider": "lmstudio",
-  "defaultModel": "qwen/qwen3.5-9b",
-  "packages": [
-    "npm:pi-mcp-adapter"
-  ]
+  "defaultModel": "qwen/qwen3.5-9b"
 }

@@ -31,6 +31,9 @@ cd boxlited-pi-agent-
 ./pi                    # first run: creates VM, installs pi + Python tools
 ./pi --version          # pass any pi CLI args through
 ./pi "fix the bug in src/foo.ts"
+
+# Rebuild the VM after changing config or the pi script:
+rm -rf .boxlite/ && ./pi
 ```
 
 First run pulls `node:22-slim`, installs `@earendil-works/pi-coding-agent`, sets up Python 3
@@ -47,9 +50,11 @@ boxlite/
 │   ├── agent/
 │   │   ├── models.json   LLM provider config (LM Studio)
 │   │   ├── mcp.json      MCP server definitions
-│   │   └── settings.json Pi settings + installed packages
+│   │   └── settings.json Pi settings
+│   ├── skills/
+│   │   └── pdf-tools/    LLM-discoverable PDF tool docs
 │   └── mcp-pdf/
-│       ├── pdf_server.py       MCP server (FastMCP)
+│       ├── pdf_server.py       MCP server (MCPServer)
 │       ├── pdf-tools-cli.py    CLI wrapper (bash-callable)
 │       └── start-pdf-mcp.sh    HTTP bridge for external clients
 ├── node_modules/         Pi npm package (v0.82.1)
@@ -85,11 +90,8 @@ The model must support tool calling (instruct/chat variants work; base models do
 
 ## PDF tools
 
-Pi can read and extract data from PDFs in `workspace/` via two mechanisms:
-
-### 1. CLI (always available)
-
-Pi calls these via its bash tool — no MCP needed:
+Pi can read and extract data from PDFs in `workspace/` via the `pdf-tools` CLI.
+Commands are available through pi's built-in bash tool:
 
 ```bash
 pdf-tools read myfile.pdf          # full text, all pages
@@ -102,14 +104,15 @@ pdf-tools cat notes.txt            # read text file
 pdf-tools write out.txt "content"  # write text file
 ```
 
-### 2. MCP (auto-discovered)
+The model discovers these via the **PDF Tools skill** (`.pi/skills/pdf-tools/SKILL.md`),
+which documents all commands. Pi auto-loads project-local skills.
 
-The `pi-mcp-adapter` package (in `settings.json`) reads `mcp.json` on startup and spawns
-the Python MCP server. Pi then exposes these as native tools to the LLM:
-`pdf_info`, `extract_pdf_text`, `extract_pdf_tables`, `read_pdf`, `list_dir`,
-`read_file`, `write_file`.
+### MCP (optional)
 
-Both paths share the same Python server and stay confined to `/workspace`.
+When the `pi-mcp-adapter` npm package is available, the `mcp.json` config spawns the Python
+MCP server inside the VM, exposing named tools (`pdf_info`, `extract_pdf_text`, etc.)
+directly in the model's function list. This is currently disabled due to npm registry issues
+— the skill-based approach above works independently.
 
 ## What's confined
 

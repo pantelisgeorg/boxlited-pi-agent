@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -e
+cd "$(dirname "$0")"
+
+BOX_NAME="pi-$(basename "$PWD")"
+BOX_HOME="${PWD}/.boxlite"
+WORKSPACE="/workspace"
+PI_CONFIG="/pi-config/agent"
+IMAGE="node:22-slim"
+BOXLITE="$(dirname "$0")/.bin/boxlite"
+PI_BOXLITE_DIR="${PWD}/.pi/agent"
+
+mkdir -p "$BOX_HOME"
+
+json=$("$BOXLITE" --home "$BOX_HOME" ps -a --format json 2>/dev/null)
+box_id=$(echo "$json" | jq -r ".[] | select(.Names == \"$BOX_NAME\") | .ID" 2>/dev/null)
+
+if [ -z "$box_id" ]; then
+    echo "[box] Creating box '$BOX_NAME' from $IMAGE ..."
+    "$BOXLITE" --home "$BOX_HOME" create \
+        --name "$BOX_NAME" \
+        --cpus 2 --memory 2048 --disk-size 10 \
+        --workdir "$WORKSPACE" \
+        --volume "$PWD:$WORKSPACE" \
+        "$IMAGE" > /dev/null
+
+    echo "[box] Installing pi..."
+    "$BOXLITE" --home "$BOX_HOME" exec "$BOX_NAME" -- \
+        npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+
+    echo "[box] Setting up Python + PDF tools..."
+    "$BOXLITE" --home "$BOX_HOME" exec "$BOX_NAME" -- \
+        sh -c 'apt-get update -qq && apt-get install -y -qq python3 python3-pip && pip3 install -q --break-system-packages pdfplumber "mcp[cli]"'
+    "$BOXLITE" --home "$BOX_HOME" exec "$BOX_NAME" -- \
+        sh -c 'mkdir -p /opt/pdf-tools && cp /workspace/.pi/mcp-pdf/*.py /opt/pdf-tools/ && chmod +x /opt/pdf-tools/pdf-tools-cli.py && ln -sf /opt/pdf-tools/pdf-tools-cli.py /usr/local/bin/pdf-tools'
+
+    echo "[box] Pi + PDF tools ready"
+
+    json=$("$BOXLITE" --home "$BOX_HOME" ps -a --format json 2>/dev/null)
+    box_id=$(echo "$json" | jq -r ".[] | select(.Names == \"$BOX_NAME\") | .ID" 2>/dev/null)
+fi
+
+TTY=""
+[ -t 0 ] && TTY="-it"
+
+if [ -f "$PWD/.pi/agent/models.json" ]; then
+    "$BOXLITE" --home "$BOX_HOME" exec "$box_id" -- \
+        sh -c 'mkdir -p /root/.pi/agent && cp /workspace/.pi/agent/models.json /root/.pi/agent/models.json'
+fi
+
+if [ -d "$PI_BOXLITE_DIR" ]; then
+    "$BOXLITE" --home "$BOX_HOME" exec "$box_id" -- \
+        sh -c 'mkdir -p /root/.pi/agent && cp /workspace/.pi/agent/settings.json /root/.pi/agent/settings.json 2>/dev/null; cp /workspace/.pi/agent/mcp.json /root/.pi/agent/mcp.json 2>/dev/null; true'
+fi
+
+"$BOXLITE" --home "$BOX_HOME" exec $TTY "$box_id" -- pi "$@"

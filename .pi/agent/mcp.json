@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pdf-tools": {
+      "command": "python3",
+      "args": ["/opt/pdf-tools/pdf_server.py"],
+      "env": {
+        "MCP_WORKSPACE": "/workspace"
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+.boxlite/
+.venv/
+node_modules/
+package-lock.json
+.bin/
+sessions/
+workspace/*
+!workspace/.gitkeep

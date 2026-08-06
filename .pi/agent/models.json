@@ -1,0 +1,15 @@
+{
+  "providers": {
+    "lmstudio": {
+      "baseUrl": "http://192.168.1.16:1234/v1",
+      "api": "openai-completions",
+      "apiKey": "lm-studio",
+      "models": [
+        {
+          "id": "qwen/qwen3.5-9b",
+          "name": "qwen3.5-9b"
+        }
+      ]
+    }
+  }
+}

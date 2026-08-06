@@ -35,3 +35,5 @@ All paths are relative to `/workspace` (the mounted workspace directory). You ca
 - The `pdf-tools` command is available via bash — always invoke it through the bash tool.
 - For PDFs, prefer `pdf-tools read` and `pdf-tools text` over the built-in `read_file` tool, which cannot parse PDF content.
 - Page numbers are 1-indexed (first page is 1).
+- **All output files MUST be saved to `/workspace/`**. Use `pdf-tools write` (not the built-in write tool) and always prefix paths with `/workspace/`. Example: `pdf-tools write /workspace/table.html "<content>"`
+- Commands like `pdf-tools tables` print to stdout — capture the output and save it with `pdf-tools write`. Example: `pdf-tools tables report.pdf 1 html > /tmp/out.html && pdf-tools write /workspace/table.html "$(cat /tmp/out.html)"`

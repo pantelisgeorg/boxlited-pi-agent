@@ -159,47 +159,70 @@ def cmd_write(path, content):
     return f"Wrote {len(content)} chars to {p.relative_to(WORKSPACE)}"
 
 
+def _handle_out_flag(args, result):
+    """If --out <path> is in args, write result to that file and return a
+    confirmation message. Otherwise return result for stdout."""
+    out_flag = "--out"
+    try:
+        idx = args.index(out_flag)
+    except ValueError:
+        return result
+    if idx + 1 >= len(args):
+        return "Error: --out requires a file path"
+    out_path = args[idx + 1]
+    return cmd_write(out_path, result)
+
+
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: pdf-tools <info|text|tables|read|ls|cat|write> [args...]")
+    args = sys.argv[1:]
+
+    if len(args) < 1:
+        print("Usage: pdf-tools <info|text|tables|read|ls|cat|write> [args...] [--out <path>]")
         sys.exit(1)
 
-    cmd = sys.argv[1]
+    cmd = args[0]
+    cmd_args = args[1:]
 
     if cmd == "info":
-        if len(sys.argv) != 3:
+        if len(cmd_args) < 1:
             print("Usage: pdf-tools info <path>")
             sys.exit(1)
-        print(cmd_info(sys.argv[2]))
+        result = cmd_info(cmd_args[0])
+        print(_handle_out_flag(cmd_args, result))
     elif cmd == "text":
-        if len(sys.argv) != 4:
-            print("Usage: pdf-tools text <path> <page>")
+        if len(cmd_args) < 2:
+            print("Usage: pdf-tools text <path> <page> [--out <path>]")
             sys.exit(1)
-        print(cmd_text(sys.argv[2], int(sys.argv[3])))
+        result = cmd_text(cmd_args[0], int(cmd_args[1]))
+        print(_handle_out_flag(cmd_args, result))
     elif cmd == "tables":
-        if len(sys.argv) < 4:
-            print("Usage: pdf-tools tables <path> <page> [fmt]")
+        if len(cmd_args) < 2:
+            print("Usage: pdf-tools tables <path> <page> [fmt] [--out <path>]")
             sys.exit(1)
-        fmt = sys.argv[4] if len(sys.argv) > 4 else "markdown"
-        print(cmd_tables(sys.argv[2], int(sys.argv[3]), fmt))
+        fmt = cmd_args[2] if len(cmd_args) > 2 and cmd_args[2] != "--out" else "markdown"
+        result = cmd_tables(cmd_args[0], int(cmd_args[1]), fmt)
+        print(_handle_out_flag(cmd_args, result))
     elif cmd == "read":
-        if len(sys.argv) != 3:
-            print("Usage: pdf-tools read <path>")
+        if len(cmd_args) < 1:
+            print("Usage: pdf-tools read <path> [--out <path>]")
             sys.exit(1)
-        print(cmd_read(sys.argv[2]))
+        result = cmd_read(cmd_args[0])
+        print(_handle_out_flag(cmd_args, result))
     elif cmd == "ls":
-        subpath = sys.argv[2] if len(sys.argv) > 2 else "."
-        print(cmd_ls(subpath))
+        subpath = cmd_args[0] if len(cmd_args) > 0 and cmd_args[0] != "--out" else "."
+        result = cmd_ls(subpath)
+        print(_handle_out_flag(cmd_args, result))
     elif cmd == "cat":
-        if len(sys.argv) != 3:
+        if len(cmd_args) < 1:
             print("Usage: pdf-tools cat <path>")
             sys.exit(1)
-        print(cmd_cat(sys.argv[2]))
+        result = cmd_cat(cmd_args[0])
+        print(_handle_out_flag(cmd_args, result))
     elif cmd == "write":
-        if len(sys.argv) < 4:
+        if len(cmd_args) < 2:
             print("Usage: pdf-tools write <path> <content>")
             sys.exit(1)
-        print(cmd_write(sys.argv[2], " ".join(sys.argv[3:])))
+        print(cmd_write(cmd_args[0], " ".join(cmd_args[1:])))
     else:
         print(f"Unknown command: {cmd}")
         print("Available: info, text, tables, read, ls, cat, write")

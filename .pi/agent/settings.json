@@ -2,7 +2,6 @@
   "defaultProvider": "lmstudio",
   "defaultModel": "qwen/qwen3.5-9b",
   "packages": [
-    "npm:pi-mcp-adapter",
-    "npm:pi-file-permissions"
+    "npm:pi-mcp-adapter"
   ]
 }

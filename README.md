@@ -40,6 +40,11 @@ First run pulls `node:22-slim`, installs `@earendil-works/pi-coding-agent`, sets
 with `pdfplumber` and `mcp`, and copies PDF tools into `/opt/pdf-tools/`. Subsequent runs
 reuse the cached box.
 
+**Working directory:** The `files/` directory is where you place your task files — it is
+the only host directory that the PDF tools and MCP server are scoped to by default.
+(Internally the entire repo is mounted at `/workspace` inside the VM, but `MCP_WORKSPACE`
+defaults to `/workspace/files`.) Create it if missing and put your project files there.
+
 ## Project structure
 
 ```
@@ -109,8 +114,11 @@ which documents all commands. Pi auto-loads project-local skills.
 
 ### MCP (optional)
 
-When the `pi-mcp-adapter` npm package is available, the `mcp.json` config spawns the Python
-MCP server inside the VM, exposing named tools (`pdf_info`, `extract_pdf_text`, etc.)
+The MCP server does **not** auto-start. It must be started manually with
+`start-pdf-mcp.sh` (see [External MCP clients](#external-mcp-clients) below).
+
+When the `pi-mcp-adapter` npm package is available, the `mcp.json` config would spawn the
+Python MCP server inside the VM, exposing named tools (`pdf_info`, `extract_pdf_text`, etc.)
 directly in the model's function list. This is currently disabled due to npm registry issues
 — the skill-based approach above works independently.
 

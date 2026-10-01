@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pdf-tools": {
+      "command": "python3",
+      "args": ["/opt/pdf-tools/pdf_server.py"],
+      "env": { "MCP_WORKSPACE": "/workspace/files" },
+      "exposure": "direct",
+      "description": "PDF tools: page info, text and table extraction from PDFs in the workspace"
+    }
+  }
+}

@@ -34,6 +34,12 @@ if [ -z "$box_id" ]; then
     "$BOXLITE" --home "$BOX_HOME" exec "$BOX_NAME" -- \
         sh -c 'mkdir -p /opt/pdf-tools && cp /workspace/.pi/mcp-pdf/*.py /opt/pdf-tools/ && chmod +x /opt/pdf-tools/pdf-tools-cli.py && ln -sf /opt/pdf-tools/pdf-tools-cli.py /usr/local/bin/pdf-tools'
 
+    echo "[box] Configuring built-in MCP (PDF tools as named functions)..."
+    if [ -f "${PWD}/.pi/mcp.json" ]; then
+        "$BOXLITE" --home "$BOX_HOME" exec "$BOX_NAME" -- \
+            sh -c 'mkdir -p /root/.pi/agent && cp /workspace/.pi/mcp.json /root/.pi/agent/mcp.json'
+    fi
+
     echo "[box] Pi + PDF tools ready"
 
     json=$("$BOXLITE" --home "$BOX_HOME" ps -a --format json 2>/dev/null)
@@ -50,7 +56,15 @@ fi
 
 if [ -d "$PI_BOXLITE_DIR" ]; then
     "$BOXLITE" --home "$BOX_HOME" exec "$box_id" -- \
-        sh -c 'mkdir -p /root/.pi/agent && cp /workspace/.pi/agent/settings.json /root/.pi/agent/settings.json 2>/dev/null; cp /workspace/.pi/agent/mcp.json /root/.pi/agent/mcp.json 2>/dev/null; true'
+        sh -c 'mkdir -p /root/.pi/agent && cp /workspace/.pi/agent/settings.json /root/.pi/agent/settings.json 2>/dev/null; cp /workspace/.pi/agent/models.json /root/.pi/agent/models.json 2>/dev/null; true'
+fi
+
+# Project-local MCP config (built-in MCP reads /root/.pi/agent/mcp.json user-level,
+# or .pi/mcp.json once the project is trusted). Copy the project file so the PDF tools
+# are exposed as named functions from the first run.
+if [ -f "$PWD/.pi/mcp.json" ]; then
+    "$BOXLITE" --home "$BOX_HOME" exec "$box_id" -- \
+        sh -c 'mkdir -p /root/.pi/agent && cp /workspace/.pi/mcp.json /root/.pi/agent/mcp.json'
 fi
 
 "$BOXLITE" --home "$BOX_HOME" exec $TTY "$box_id" -- pi "$@"

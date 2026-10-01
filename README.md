@@ -54,8 +54,8 @@ boxlite/
 ├── .pi/
 │   ├── agent/
 │   │   ├── models.json   LLM provider config (LM Studio)
-│   │   ├── mcp.json      MCP server definitions
 │   │   └── settings.json Pi settings
+│   ├── mcp.json          MCP server definitions (built-in MCP)
 │   ├── skills/
 │   │   └── pdf-tools/    LLM-discoverable PDF tool docs
 │   └── mcp-pdf/
@@ -112,15 +112,27 @@ pdf-tools write out.txt "content"  # write text file
 The model discovers these via the **PDF Tools skill** (`.pi/skills/pdf-tools/SKILL.md`),
 which documents all commands. Pi auto-loads project-local skills.
 
-### MCP (optional)
+### MCP (built-in)
 
-The MCP server does **not** auto-start. It must be started manually with
-`start-pdf-mcp.sh` (see [External MCP clients](#external-mcp-clients) below).
+Pi 0.99+ ships built-in MCP support, so the PDF tools can also be exposed as named functions
+(`mcp__pdf-tools__pdf_info`, `mcp__pdf-tools__extract_pdf_text`, etc.) in the model's
+function list — no third-party adapter needed.
 
-When the `pi-mcp-adapter` npm package is available, the `mcp.json` config would spawn the
-Python MCP server inside the VM, exposing named tools (`pdf_info`, `extract_pdf_text`, etc.)
-directly in the model's function list. This is currently disabled due to npm registry issues
-— the skill-based approach above works independently.
+The `.pi/mcp.json` file defines a `pdf-tools` stdio server that runs the Python MCP server
+(`.pi/mcp-pdf/pdf_server.py`) inside the VM and scopes it to `/workspace/files`. The `./pi`
+wrapper copies it into the VM's user-level config (`~/.pi/agent/mcp.json`) on first setup, so
+the tools are available as soon as a session starts.
+
+The tools are registered with `exposure: "direct"`, so they surface directly in the tool
+list. To gate them behind search or codemode instead, change `exposure` to `deferred` or
+`codemode` (see [pi's MCP docs](https://github.com/earendil-works/pi)). `pi mcp list` shows
+connection state and tool names; `/mcp` inspects them inside an interactive session.
+
+The skill-based approach (above) works independently and remains the simplest path when
+named-tool exposure isn't needed.
+
+> Note: an earlier `pi-mcp-adapter` approach was blocked by npm registry issues. That package
+> now exists, but it is no longer necessary — Pi's built-in MCP covers this use case.
 
 ## What's confined
 
